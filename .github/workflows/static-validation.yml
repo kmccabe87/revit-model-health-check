@@ -1,0 +1,22 @@
+name: Static validation
+
+on:
+  push:
+    branches: [main, "codex/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  repository-integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate version, framework, ribbon, manifest, and paths
+        run: python scripts/validate_repository.py
+      - name: Explain remaining release gates
+        shell: bash
+        run: |
+          echo "Static validation passed."
+          echo "Windows builds against installed Revit 2025/2026/2027 APIs and in-Revit tests are still required."
