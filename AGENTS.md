@@ -33,6 +33,11 @@ and load only the references it routes to.
 
 - Repository: `kmccabe87/revit-model-health-check`.
 - Preserve history and the existing MIT license.
+- Keep the README's first substantive section focused on downloading and
+  installing the ready-to-use Distribution ZIP. Put source/build instructions
+  later and clearly label them for developers.
+- Present the Distribution ZIP as the primary release asset for end users;
+  source packages are secondary developer downloads.
 - Release assets must include the versioned Source ZIP and Distribution ZIP.
 - Publish `update-manifest.json` only after filling URLs and SHA-256 values and
   changing `releaseApproved` to `true` after Windows/Revit verification.
