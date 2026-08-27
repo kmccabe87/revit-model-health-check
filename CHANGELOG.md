@@ -8,6 +8,18 @@ entry describes the source state; it does not prove release approval. Consult
 
 - No product behavior changes yet.
 
+## [0.6.13] - 2026-08-26
+
+- Fixed the build preflight so it scans authored C# only and ignores generated
+  `obj`/`bin` files such as WPF `HealthDashboard.g.cs`.
+- Corrected preflight diagnostics to report the real source path and line.
+- Synchronized project, assembly, dashboard, build, installer, package, and
+  documentation version metadata to 0.6.13.
+- Confirmed that supplied Revit 2025, 2026, and 2027 build outputs match the
+  staged Distribution ZIP contents.
+- Preserved Health Check, Performance Analyzer, WPF UI, ribbon, installer, and
+  deployment behavior.
+
 ## [0.6.12] - 2026-08-26
 
 - Renamed the ribbon to **Pre-Publish Checks > Health Check > Scan Model**.

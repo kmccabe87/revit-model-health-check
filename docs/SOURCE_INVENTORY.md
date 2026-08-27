@@ -1,4 +1,4 @@
-# Source Inventory - v0.6.12
+# Source Inventory - v0.6.13
 
 ## Identity and compatibility
 
@@ -28,9 +28,14 @@
 - `scripts/Package.ps1`: ready-to-install Distribution ZIP packaging.
 - `assets/`: transparent 16, 32, and 64 pixel ribbon icon assets.
 
-## Baseline environment result
+## Build/package evidence received
 
-The handoff environment is Linux and does not contain PowerShell, the .NET 8
-and .NET 10 SDKs, or Autodesk Revit assemblies. The Windows/Revit build and
-runtime acceptance gates therefore remain pending. Repository static checks are
-separate and must never be presented as Revit verification.
+- Revit 2025, 2026, and 2027 DLL/PDB/dependency outputs were supplied.
+- Each supplied DLL is byte-identical to its matching staged distribution DLL.
+- The supplied Distribution ZIP passes archive integrity testing.
+- The v0.6.13 delta fixes the build preflight false positive caused by generated
+  WPF/MSBuild C# under `obj`/`bin`.
+
+The current handoff environment cannot independently rebuild against Autodesk
+Revit assemblies or perform runtime Revit verification. Supplied build evidence
+is recorded separately from in-Revit acceptance.

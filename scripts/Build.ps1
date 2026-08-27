@@ -10,7 +10,7 @@ $root = Split-Path -Parent $here
 $project = Join-Path $root "src\SVMModelHealth\SVMModelHealth.csproj"
 
 Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host "Revit Model Health Check v0.6.12 - Revit 2025 / 2026 / 2027 Build" -ForegroundColor Cyan
+Write-Host "Revit Model Health Check v0.6.13 - Revit 2025 / 2026 / 2027 Build" -ForegroundColor Cyan
 Write-Host "============================================================" -ForegroundColor Cyan
 
 if (!(Test-Path $project)) { throw "Project file not found: $project" }
@@ -18,14 +18,20 @@ if (!(Test-Path $project)) { throw "Project file not found: $project" }
 # Source preflight: catch the recurring CS1009 class of mistake before running three builds.
 # This intentionally targets ordinary C# string literals containing Windows-style paths with
 # unescaped backslashes. Verbatim strings (@"...") and escaped backslashes are allowed.
-$csFiles = Get-ChildItem (Join-Path $root "src\SVMModelHealth") -Filter *.cs -Recurse
+$sourceRoot = Join-Path $root "src\SVMModelHealth"
+# Only inspect authored source files. WPF/MSBuild generates .cs files under obj\ and bin\
+# (for example HealthDashboard.g.cs with #line paths such as "..\..\..\HealthDashboard.xaml").
+# Those generated files are valid compiler output and must never fail this source preflight.
+$csFiles = Get-ChildItem $sourceRoot -Filter *.cs -File -Recurse | Where-Object {
+    $_.FullName -notmatch '[\\/](obj|bin)[\\/]'
+}
 $badEscapeHits = @()
 foreach ($csFile in $csFiles) {
     $lineNo = 0
     foreach ($line in Get-Content $csFile.FullName) {
         $lineNo++
         if ($line -match '"[^"\r\n]*\\(?![\\"''0abfnrtvuxU])' -and $line -notmatch '@"') {
-            $badEscapeHits += "${($csFile.FullName)}:${lineNo}: $line"
+            $badEscapeHits += "$($csFile.FullName):${lineNo}: $line"
         }
     }
 }

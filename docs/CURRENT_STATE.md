@@ -1,4 +1,10 @@
-# Current State - v0.6.12
+# Current State - v0.6.13
+
+## v0.6.13 build correction
+- Build preflight scans authored C# only and excludes generated `obj`/`bin` files.
+- Preflight failures now identify the actual source file and line number.
+- Build outputs were supplied for Revit 2025, 2026, and 2027, together with a ready-to-install Distribution ZIP.
+- No product behavior changed from v0.6.12.
 
 ## Latest user-facing changes
 - Ribbon tab renamed to **Pre-Publish Checks**.
@@ -18,5 +24,5 @@
 - `%APPDATA%\\Autodesk\\Revit\\Addins\\<year>` per-user deployment.
 - Framework matrix: 2025/2026 = .NET 8; 2027 = .NET 10.
 
-## Pending GitHub direction
-GitHub Releases should eventually serve both handoff and end-user updates. The add-in may later check a release manifest for a newer version and launch an external updater after Revit closes. Do not overwrite the running add-in DLL from inside Revit.
+## GitHub direction
+The public GitHub repository is the source, handoff, and future release/update channel. The add-in may later check a release manifest for a newer version and launch an external updater after Revit closes. Do not overwrite the running add-in DLL from inside Revit.

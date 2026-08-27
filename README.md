@@ -1,6 +1,12 @@
-# Revit Model Health Check v0.6.12
+# Revit Model Health Check v0.6.13
 
-## v0.6.12 branding alignment
+## v0.6.13 build preflight fix
+- Fixed the recurring false-positive C# escape preflight caused by WPF/MSBuild-generated `obj`/`bin` `.cs` files.
+- The preflight now scans authored C# source only and ignores generated files such as `HealthDashboard.g.cs` whose `#line` directives legitimately contain Windows-style relative paths.
+- Corrected preflight diagnostics so any future hit includes the actual source file path and line number.
+- No Health Check, Performance Analyzer, WPF UI, ribbon, installer, or deployment behavior changed.
+
+## v0.6.13 branding alignment
 
 - Centered the white HEALTH CHECK title and blue Revit model QA / QC subtitle relative to one another in the WPF brand header.
 - Removed the small left offset on the subtitle so both lines share the same visual center.
@@ -33,7 +39,7 @@ After `BUILD.cmd` succeeds for all three versions, double-click **`PACKAGE.cmd`*
 
 It creates:
 
-`dist\Revit_Model_Health_Check_v0.6.12_Distribution.zip`
+`dist\Revit_Model_Health_Check_v0.6.13_Distribution.zip`
 
 Give that Distribution ZIP to another user. They do **not** need the source code or .NET SDK to install it. They only need to:
 1. Extract the Distribution ZIP completely.
@@ -65,7 +71,7 @@ Close Revit and run `UNINSTALL.cmd`. It removes both the current deployment name
 
 ## Version handoff
 - Baseline: **v0.5.1**
-- Output: **v0.6.12**
+- Output: **v0.6.13**
 - Replaced the WinForms dashboard with a WPF dashboard so the UI can closely match the approved Revit Model Health Check reference without native white WinForms chrome.
 - Added a custom borderless dark title bar, Revit Model Health Check brand header, blue Health/Performance tabs, dark metric cards, issue-category rail, searchable sortable WPF DataGrids, custom dark scrollbars, dark progress bar, and the **Less mystery. Better models.** footer.
 - Preserved the single Health Check ribbon command, all health checks including centerline visibility, on-demand Performance Analyzer, element selection, CSV/HTML exports, sorting, performance safety filtering, deployment naming, installer menu, and share-package workflow.
@@ -106,51 +112,51 @@ Installer choices:
 
 After installing a single Revit version, the installer returns to the menu so another year can be installed without reopening it. After any install, pressing `Esc` exits.
 
-For sharing through GitHub, run `BUILD.cmd` successfully for all supported years, then run `CREATE SHARE PACKAGE.cmd` (or `PACKAGE.cmd`) and upload the generated `dist\Revit_Model_Health_Check_v0.6.12_Distribution.zip` as the release download.
+For sharing through GitHub, run `BUILD.cmd` successfully for all supported years, then run `CREATE SHARE PACKAGE.cmd` (or `PACKAGE.cmd`) and upload the generated `dist\Revit_Model_Health_Check_v0.6.13_Distribution.zip` as the release download.
 
-## v0.6.12 WPF dashboard rebuild
+## v0.6.13 WPF dashboard rebuild
 - The dashboard presentation layer is now WPF rather than WinForms.
 - The approved screenshot is the visual acceptance reference: dark navy shell, Revit Model Health Check header, blue active tab, dark cards, readable grids, dark scrollbars, and no white native control chrome.
 - Health issues can be filtered by category and searched while retaining sortable columns.
 - Performance results can be searched and sorted without rerunning the scan.
 - Performance analysis remains manual/opt-in and continues to use the existing safe physical-model filtering and breadcrumb diagnostics.
 
-## v0.6.12 WPF compile fix
+## v0.6.13 WPF compile fix
 
 - Qualifies WPF `Color` so it cannot collide with `Autodesk.Revit.DB.Color`.
 - Qualifies WPF `Visibility` so the `Window.Visibility` instance property cannot shadow the enum.
 - No health-check, performance-analysis, installer, or UI behavior was intentionally changed from v0.6.0.
 
-## v0.6.12
+## v0.6.13
 - Removed the bright/white top edge from the custom WPF window by using `WindowChrome` with zero glass frame and by not painting a top border.
 - Fixed **Install All** to run the same proven single-year installer sequentially for 2025, 2026, and 2027 and report each result independently.
 
-## v0.6.12
+## v0.6.13
 - Renamed the remaining user-facing **STRATUS Model Check** branding to **Revit Model Health Check**.
 - The Revit ribbon tab is now **Revit Model Health Check**.
 - The WPF dashboard brand header now displays **REVIT MODEL / HEALTH CHECK** while preserving the existing visual layout and theme.
 - No health-check, performance-analysis, installer, or deployment behavior was intentionally changed.
 
-## v0.6.12 naming cleanup
+## v0.6.13 naming cleanup
 - Shortened the Revit ribbon tab to **Health Check**.
 - Renamed the ribbon command button to **Model Health**.
 - Simplified the WPF title-bar and brand header to **Health Check** while keeping the existing model-health logo.
 - Deployment/add-in folder and manifest names remain **Revit Model Health Check** so upgrades continue to replace the existing installation cleanly.
 
-## v0.6.12 installer UX fix
+## v0.6.13 installer UX fix
 After any install completes, pressing Esc now exits the installer immediately. Any other key returns to the year-selection menu. This removes the previous two-Escape behavior.
 
-## v0.6.12 title-bar cleanup
+## v0.6.13 title-bar cleanup
 
 - Removed the redundant `Health Check` text from the custom WPF title bar.
 - Kept the app icon and version indicator in the title bar.
 - The branded `HEALTH CHECK` header remains the single visual title inside the dashboard.
 - No health-check, performance, installer, deployment, or Revit-version behavior changed.
 
-## v0.6.12
+## v0.6.13
 
 - Baseline: v0.6.7.
-- Corrected inherited version metadata inconsistencies so assembly, build, installer, package, and README all report v0.6.12.
+- Corrected inherited version metadata inconsistencies so assembly, build, installer, package, and README all report v0.6.13.
 - Tightened the WPF title/header area and centered the Health Check brand/logo group.
 - Made the Health Issue Details pane vertically scrollable.
 - Changed Centerlines Visible to inspect only the current active view.
@@ -158,20 +164,20 @@ After any install completes, pressing Esc now exits the installer immediately. A
 - When the active view has a template and that template controls the applicable Model/Annotation/Analytical V/G setting, the template's category visibility is used.
 - No Performance Analyzer, report, selection, installer-menu, distribution, or unrelated health-check behavior was intentionally changed.
 
-## v0.6.12 compact header and ribbon cleanup
+## v0.6.13 compact header and ribbon cleanup
 - Reduced the custom WPF title bar, branding header, and tab strip heights to reclaim unused vertical space.
 - Kept the centered HEALTH CHECK brand block while shrinking its icon/title footprint proportionally.
 - Removed the visible `Model Health` text from the ribbon pushbutton so the button is icon-only; the ribbon panel title remains `Model Health`.
 - No health-check, performance-analysis, centerline, reporting, or installer behavior was changed.
 
 
-## v0.6.12 ribbon naming fix
+## v0.6.13 ribbon naming fix
 - Changed the ribbon tab to **Tools for STRATUS**.
 - Changed the ribbon panel to **Health Check**.
 - Restored a non-empty pushbutton label and named it **Check Model for Publish** so Revit can create the button without an `ArgumentException`.
 - No dashboard, scanner, performance, installer, or distribution behavior changed.
 
-## v0.6.12 ribbon naming
+## v0.6.13 ribbon naming
 - Renamed the Revit ribbon tab to **Pre-Publish Checks**.
 - Renamed the ribbon pushbutton to **Scan Model**.
 - Kept the **Health Check** panel and all command behavior unchanged.

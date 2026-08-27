@@ -43,7 +43,7 @@ public partial class HealthDashboard : Window
         _config = config;
         InitializeComponent();
 
-        var version = typeof(HealthDashboard).Assembly.GetName().Version?.ToString(3) ?? "0.6.12";
+        var version = typeof(HealthDashboard).Assembly.GetName().Version?.ToString(3) ?? "0.6.13";
         VersionText.Text = $"v{version}";
         FooterVersionText.Text = $"v{version}";
         RevitContextText.Text = $"Revit {_uiDoc.Application.Application.VersionNumber}   |   Active View: {_uiDoc.ActiveView?.Name ?? "Unknown"}";

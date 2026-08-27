@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $root = Split-Path -Parent $here
-$version = "0.6.12"
+$version = "0.6.13"
 $years = @(2025, 2026, 2027)
 
 Write-Host "============================================================" -ForegroundColor Cyan

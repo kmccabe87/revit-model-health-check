@@ -6,7 +6,7 @@ and load only the references it routes to.
 
 ## Baseline
 
-- Current imported baseline: v0.6.12.
+- Current imported baseline: v0.6.13.
 - Revit 2025 and 2026 target `net8.0-windows`.
 - Revit 2027 targets `net10.0-windows`.
 - Product: Revit Model Health Check.
