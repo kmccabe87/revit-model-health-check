@@ -1,0 +1,154 @@
+{
+  "rules": [
+    {
+      "key": "warnings",
+      "name": "Revit Warnings",
+      "category": "Stability",
+      "severity": "Warning",
+      "reviewAt": 25,
+      "failAt": 100,
+      "weight": 12,
+      "guidance": "Review and resolve warnings, prioritizing repeated/geometry-related warnings."
+    },
+    {
+      "key": "imported_cad",
+      "name": "Imported CAD (not linked)",
+      "category": "Links & Imports",
+      "severity": "Critical",
+      "reviewAt": 1,
+      "failAt": 3,
+      "weight": 12,
+      "guidance": "Replace imported CAD with links where practical, then remove unnecessary imports."
+    },
+    {
+      "key": "linked_cad",
+      "name": "Linked CAD",
+      "category": "Links & Imports",
+      "severity": "Info",
+      "reviewAt": 6,
+      "failAt": 15,
+      "weight": 4,
+      "guidance": "Confirm each CAD link is required and correctly positioned."
+    },
+    {
+      "key": "inplace_families",
+      "name": "In-Place Families",
+      "category": "Families",
+      "severity": "Warning",
+      "reviewAt": 3,
+      "failAt": 10,
+      "weight": 8,
+      "guidance": "Replace repeated or complex in-place content with loadable families."
+    },
+    {
+      "key": "model_groups",
+      "name": "Model Groups",
+      "category": "Modeling",
+      "severity": "Info",
+      "reviewAt": 15,
+      "failAt": 40,
+      "weight": 3,
+      "guidance": "Review model groups for unnecessary nesting or duplication."
+    },
+    {
+      "key": "detail_groups",
+      "name": "Detail Groups",
+      "category": "Documentation",
+      "severity": "Info",
+      "reviewAt": 25,
+      "failAt": 75,
+      "weight": 2,
+      "guidance": "Review large quantities of detail groups for maintainability."
+    },
+    {
+      "key": "unpinned_rvt_links",
+      "name": "Unpinned Revit Links",
+      "category": "Links & Imports",
+      "severity": "Critical",
+      "reviewAt": 1,
+      "failAt": 2,
+      "weight": 10,
+      "guidance": "Pin Revit links after confirming coordinates and placement."
+    },
+    {
+      "key": "unloaded_rvt_links",
+      "name": "Unloaded Revit Links",
+      "category": "Links & Imports",
+      "severity": "Warning",
+      "reviewAt": 1,
+      "failAt": 3,
+      "weight": 7,
+      "guidance": "Confirm unloaded links are intentional before model exchange."
+    },
+    {
+      "key": "unplaced_rooms",
+      "name": "Unplaced Rooms",
+      "category": "Spatial",
+      "severity": "Warning",
+      "reviewAt": 1,
+      "failAt": 10,
+      "weight": 4,
+      "guidance": "Place or delete rooms that are no longer needed."
+    },
+    {
+      "key": "unenclosed_rooms",
+      "name": "Unenclosed Rooms",
+      "category": "Spatial",
+      "severity": "Warning",
+      "reviewAt": 1,
+      "failAt": 10,
+      "weight": 5,
+      "guidance": "Resolve room-bounding conditions or delete obsolete rooms."
+    },
+    {
+      "key": "unplaced_spaces",
+      "name": "Unplaced Spaces",
+      "category": "Spatial",
+      "severity": "Warning",
+      "reviewAt": 1,
+      "failAt": 10,
+      "weight": 4,
+      "guidance": "Place or delete MEP spaces that are no longer needed."
+    },
+    {
+      "key": "unenclosed_spaces",
+      "name": "Unenclosed Spaces",
+      "category": "Spatial",
+      "severity": "Warning",
+      "reviewAt": 1,
+      "failAt": 10,
+      "weight": 5,
+      "guidance": "Resolve space-bounding conditions or delete obsolete spaces."
+    },
+    {
+      "key": "unused_view_templates",
+      "name": "Unused View Templates",
+      "category": "Documentation",
+      "severity": "Info",
+      "reviewAt": 10,
+      "failAt": 30,
+      "weight": 2,
+      "guidance": "Remove obsolete templates after confirming they are not required for future deliverables."
+    },
+    {
+      "key": "centerlines_visible",
+      "name": "Centerlines Visible",
+      "category": "Graphics & Visibility",
+      "severity": "Warning",
+      "reviewAt": 1,
+      "failAt": 5,
+      "weight": 6,
+      "guidance": "Checks only the current active view. Centerlines count as visible only when the centerline category/subcategory and every parent category are visible. If the active view template controls the applicable V/G category setting, the template-controlled state is used."
+    },
+    {
+      "key": "user_worksets",
+      "name": "User Worksets",
+      "category": "Worksharing",
+      "severity": "Info",
+      "reviewAt": 20,
+      "failAt": 50,
+      "weight": 2,
+      "guidance": "Confirm the workset structure remains intentional and manageable."
+    }
+  ]
+}

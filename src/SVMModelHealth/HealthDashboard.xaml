@@ -1,0 +1,414 @@
+<Window x:Class="SVMModelHealth.HealthDashboard"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="Revit Model Health Check"
+        Width="1320" Height="820" MinWidth="1080" MinHeight="700"
+        WindowStyle="None" ResizeMode="CanResize" AllowsTransparency="False"
+        Background="#051422" Foreground="#E6EEF5"
+        FontFamily="Segoe UI" FontSize="13"
+        SnapsToDevicePixels="True" UseLayoutRounding="True">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="0"
+                            ResizeBorderThickness="6"
+                            GlassFrameThickness="0"
+                            CornerRadius="0"
+                            UseAeroCaptionButtons="False"/>
+    </shell:WindowChrome.WindowChrome>
+    <Window.Resources>
+        <SolidColorBrush x:Key="WindowBrush" Color="#051422"/>
+        <SolidColorBrush x:Key="PanelBrush" Color="#081F32"/>
+        <SolidColorBrush x:Key="PanelBrush2" Color="#0A273E"/>
+        <SolidColorBrush x:Key="CardBrush" Color="#0A2337"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="#1C567C"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="#008BF4"/>
+        <SolidColorBrush x:Key="AccentHoverBrush" Color="#139DFF"/>
+        <SolidColorBrush x:Key="MutedBrush" Color="#A0B9CA"/>
+        <SolidColorBrush x:Key="CriticalBrush" Color="#FF6B6B"/>
+        <SolidColorBrush x:Key="WarningBrush" Color="#FFD45A"/>
+        <SolidColorBrush x:Key="PassBrush" Color="#6DE18C"/>
+
+        <Style x:Key="CardBorder" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource CardBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="12"/>
+        </Style>
+
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#59BDFF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="18,10"/>
+            <Setter Property="MinHeight" Value="42"/>
+            <Setter Property="MinWidth" Value="150"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Bd" Property="Background" Value="{StaticResource AccentHoverBrush}"/></Trigger>
+                            <Trigger Property="IsPressed" Value="True"><Setter TargetName="Bd" Property="Background" Value="#0066B5"/></Trigger>
+                            <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Bd" Property="Opacity" Value="0.55"/></Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Background" Value="#0B2942"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="MinWidth" Value="130"/>
+        </Style>
+
+        <Style x:Key="TabButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+            <Setter Property="MinWidth" Value="220"/>
+            <Setter Property="MinHeight" Value="48"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Margin" Value="0,0,4,0"/>
+            <Setter Property="Padding" Value="22,10"/>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#071B2B"/>
+            <Setter Property="Foreground" Value="#E6EEF5"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="CaretBrush" Value="White"/>
+            <Setter Property="SelectionBrush" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Padding" Value="10,7"/>
+        </Style>
+
+        <Style TargetType="ScrollBar">
+            <Setter Property="Background" Value="#071B2B"/>
+            <Setter Property="Width" Value="13"/>
+            <Setter Property="Height" Value="13"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid Background="#071B2B">
+                            <Track x:Name="PART_Track" Orientation="{TemplateBinding Orientation}" Focusable="False">
+                                <Track.DecreaseRepeatButton><RepeatButton x:Name="DecreaseButton" Background="Transparent" Command="{x:Static ScrollBar.PageUpCommand}"/></Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Background="#0B78C8">
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="Thumb"><Border Background="{TemplateBinding Background}" CornerRadius="6" Margin="2"/></ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton><RepeatButton x:Name="IncreaseButton" Background="Transparent" Command="{x:Static ScrollBar.PageDownCommand}"/></Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Orientation" Value="Horizontal">
+                                <Setter TargetName="DecreaseButton" Property="Command" Value="{x:Static ScrollBar.PageLeftCommand}"/>
+                                <Setter TargetName="IncreaseButton" Property="Command" Value="{x:Static ScrollBar.PageRightCommand}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="#071B2B"/>
+            <Setter Property="Foreground" Value="#E6EEF5"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#173E59"/>
+            <Setter Property="VerticalGridLinesBrush" Value="#173E59"/>
+            <Setter Property="RowBackground" Value="#071B2B"/>
+            <Setter Property="AlternatingRowBackground" Value="#092238"/>
+            <Setter Property="CanUserSortColumns" Value="True"/>
+            <Setter Property="CanUserResizeColumns" Value="True"/>
+            <Setter Property="CanUserReorderColumns" Value="True"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="RowHeaderWidth" Value="0"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="SelectionUnit" Value="FullRow"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        </Style>
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#0B2942"/>
+            <Setter Property="Foreground" Value="#E6EEF5"/>
+            <Setter Property="BorderBrush" Value="#1B4D70"/>
+            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+            <Setter Property="Padding" Value="10,9"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+        <Style TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="8,7"/>
+            <Setter Property="Foreground" Value="#E6EEF5"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="#0A67AA"/><Setter Property="Foreground" Value="White"/></Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="DataGridRow">
+            <Setter Property="MinHeight" Value="34"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="#0A67AA"/></Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="CategoryList" TargetType="ListBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#E6EEF5"/>
+        </Style>
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Background" Value="#0A2337"/>
+            <Setter Property="Foreground" Value="#E6EEF5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="B" Background="{TemplateBinding Background}" BorderBrush="#1C567C" BorderThickness="1" CornerRadius="7" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True"><Setter TargetName="B" Property="Background" Value="#008BF4"/><Setter TargetName="B" Property="BorderBrush" Value="#59BDFF"/></Trigger>
+                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="B" Property="Background" Value="#0B4165"/></Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ProgressBar">
+            <Setter Property="Height" Value="13"/>
+            <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Background" Value="#071B2B"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                            <Grid x:Name="PART_Track">
+                                <Border x:Name="PART_Indicator" HorizontalAlignment="Left" Background="{TemplateBinding Foreground}" CornerRadius="6"/>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="22"/>
+                <RowDefinition Height="54"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="34"/>
+            </Grid.RowDefinitions>
+
+            <!-- Custom title bar -->
+            <Grid Grid.Row="0" Background="#071A2A" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
+                    <Image x:Name="TitleIcon" Width="16" Height="16" Margin="0,0,6,0"/>
+                    <TextBlock x:Name="VersionText" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button x:Name="MinimizeButton" Content="—" Width="34" Height="22" Background="Transparent" BorderThickness="0" Foreground="White" Click="MinimizeButton_Click"/>
+                    <Button x:Name="MaximizeButton" Content="□" Width="34" Height="22" Background="Transparent" BorderThickness="0" Foreground="White" Click="MaximizeButton_Click"/>
+                    <Button x:Name="CloseTopButton" Content="✕" Width="36" Height="22" Background="Transparent" BorderThickness="0" Foreground="White" Click="CloseButton_Click"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Brand header -->
+            <Grid Grid.Row="1" Background="{StaticResource WindowBrush}" Margin="12,0,12,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Image x:Name="BrandIcon" Width="42" Height="42" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="HEALTH CHECK" FontSize="22" FontWeight="SemiBold" Foreground="White" HorizontalAlignment="Center" TextAlignment="Center"/>
+                        <TextBlock Text="Revit model QA / QC" FontSize="11" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" TextAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,4,0">
+                    <TextBlock x:Name="RevitContextText" TextAlignment="Right" FontSize="13"/>
+                    <TextBlock Text="●  Ready" TextAlignment="Right" Foreground="{StaticResource PassBrush}" FontSize="12" Margin="0,3,0,0"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Tabs -->
+            <Border Grid.Row="2" Background="{StaticResource WindowBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1" Padding="16,0,16,0">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                    <Button x:Name="HealthTabButton" Style="{StaticResource TabButton}" Content="▣  Health Check" Click="HealthTabButton_Click"/>
+                    <Button x:Name="PerformanceTabButton" Style="{StaticResource TabButton}" Content="▥  Performance" Click="PerformanceTabButton_Click"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Content -->
+            <Grid Grid.Row="3" Margin="16,10,16,8">
+                <!-- Health view -->
+                <Grid x:Name="HealthView">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Style="{StaticResource CardBorder}" Padding="12" Margin="0,0,0,8">
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="Model Health Check" FontSize="20" FontWeight="SemiBold"/>
+                                <TextBlock x:Name="HealthSummaryText" Foreground="{StaticResource MutedBrush}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <Button Grid.Column="1" Style="{StaticResource PrimaryButton}" Content="▶  Run Health Check" Click="RunHealth_Click" Margin="18,0,0,0"/>
+                        </Grid>
+                    </Border>
+
+                    <UniformGrid Grid.Row="1" Columns="5" Margin="0,0,0,8">
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0"><StackPanel><TextBlock Text="Model Score" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="ScoreValue" FontSize="27" FontWeight="Bold" Margin="0,4,0,0"/></StackPanel></Border>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0"><StackPanel><TextBlock Text="Total Checks" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="TotalChecksValue" FontSize="27" FontWeight="Bold" Foreground="#58C7FF" Margin="0,4,0,0"/></StackPanel></Border>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0"><StackPanel><TextBlock Text="Failed" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="FailedValue" FontSize="27" FontWeight="Bold" Foreground="{StaticResource CriticalBrush}" Margin="0,4,0,0"/></StackPanel></Border>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0"><StackPanel><TextBlock Text="Review" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="ReviewValue" FontSize="27" FontWeight="Bold" Foreground="{StaticResource WarningBrush}" Margin="0,4,0,0"/></StackPanel></Border>
+                        <Border Style="{StaticResource CardBorder}"><StackPanel><TextBlock Text="Passed" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="PassedValue" FontSize="27" FontWeight="Bold" Foreground="{StaticResource PassBrush}" Margin="0,4,0,0"/></StackPanel></Border>
+                    </UniformGrid>
+
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="260"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Style="{StaticResource CardBorder}" Padding="12">
+                            <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                                <TextBlock Text="Issue Categories" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,10"/>
+                                <ListBox x:Name="HealthCategoryList" Grid.Row="1" Style="{StaticResource CategoryList}" SelectionChanged="HealthCategoryList_SelectionChanged"/>
+                            </Grid>
+                        </Border>
+                        <Border Grid.Column="2" Style="{StaticResource CardBorder}" Padding="0">
+                            <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <Grid Margin="10,8,10,8"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="300"/></Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="HealthGridTitle" Text="Issues" FontWeight="SemiBold" FontSize="15" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="HealthSearchBox" Grid.Column="1" ToolTip="Search health checks" TextChanged="HealthSearchBox_TextChanged"/>
+                                </Grid>
+                                <DataGrid x:Name="HealthGrid" Grid.Row="1" SelectionChanged="HealthGrid_SelectionChanged" MouseDoubleClick="HealthGrid_MouseDoubleClick" LoadingRow="HealthGrid_LoadingRow" AlternationCount="2">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="95" SortMemberPath="Status"/>
+                                        <DataGridTextColumn Header="Check" Binding="{Binding Check}" Width="2*" SortMemberPath="Check"/>
+                                        <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="1.4*" SortMemberPath="Category"/>
+                                        <DataGridTextColumn Header="Count" Binding="{Binding Count}" Width="85" SortMemberPath="Count"/>
+                                        <DataGridTextColumn Header="Review" Binding="{Binding Review}" Width="85" SortMemberPath="Review"/>
+                                        <DataGridTextColumn Header="Fail" Binding="{Binding Fail}" Width="85" SortMemberPath="Fail"/>
+                                        <DataGridTextColumn Header="Severity" Binding="{Binding Severity}" Width="100" SortMemberPath="Severity"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                                <Border Grid.Row="2" Background="#061827" BorderBrush="#173E59" BorderThickness="0,1,0,0" Padding="10,8">
+                                    <Grid>
+                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="86"/></Grid.RowDefinitions>
+                                        <TextBlock Text="Issue Details" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" PanningMode="VerticalOnly">
+                                            <TextBlock x:Name="HealthDetailsText" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,0,6,0"/>
+                                        </ScrollViewer>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <Grid Grid.Row="3" Margin="0,8,0,0"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <Button Style="{StaticResource SecondaryButton}" Content="▶  Select Elements" Click="SelectHealth_Click" HorizontalAlignment="Left"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button Style="{StaticResource SecondaryButton}" Content="Export CSV" Click="ExportHealthCsv_Click" Margin="0,0,8,0"/>
+                            <Button Style="{StaticResource SecondaryButton}" Content="Export HTML" Click="ExportHtml_Click" Margin="0,0,8,0"/>
+                            <Button Style="{StaticResource SecondaryButton}" Content="✕  Close" Click="CloseButton_Click"/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+
+                <!-- Performance view -->
+                <Grid x:Name="PerformanceView" Visibility="Collapsed">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Style="{StaticResource CardBorder}" Margin="0,0,0,8">
+                        <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="Performance Analyzer" FontSize="20" FontWeight="SemiBold"/>
+                                <TextBlock x:Name="PerformanceSummaryText" Foreground="{StaticResource MutedBrush}" Margin="0,4,0,0" TextWrapping="Wrap" Text="Profile physical model content to find families and fabrication parts that slow extraction and publishing."/>
+                            </StackPanel>
+                            <Button x:Name="RunPerformanceButton" Grid.Column="1" Style="{StaticResource PrimaryButton}" Content="▶  Run Performance Analysis" Click="RunPerformance_Click" Margin="18,0,0,0"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="1" Style="{StaticResource CardBorder}" Margin="0,0,0,8" Padding="12">
+                        <StackPanel>
+                            <TextBlock x:Name="PerformanceStatusText" Text="Ready. Performance analysis runs only when requested." Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap"/>
+                            <ProgressBar x:Name="PerformanceProgress" Minimum="0" Maximum="100" Value="0" Margin="0,9,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <UniformGrid Grid.Row="2" Columns="5" Margin="0,0,0,8">
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0"><StackPanel><TextBlock Text="Total Time" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="PerfTimeValue" FontSize="22" FontWeight="Bold" Foreground="#58C7FF" Margin="0,4,0,0"/></StackPanel></Border>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0"><StackPanel><TextBlock Text="Scanned" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="PerfScannedValue" FontSize="22" FontWeight="Bold" Margin="0,4,0,0"/></StackPanel></Border>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0"><StackPanel><TextBlock Text="Skipped" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="PerfSkippedValue" FontSize="22" FontWeight="Bold" Foreground="{StaticResource WarningBrush}" Margin="0,4,0,0"/></StackPanel></Border>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0"><StackPanel><TextBlock Text="Groups" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="PerfGroupsValue" FontSize="22" FontWeight="Bold" Margin="0,4,0,0"/></StackPanel></Border>
+                        <Border Style="{StaticResource CardBorder}"><StackPanel><TextBlock Text="Slowest Avg" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="PerfSlowValue" FontSize="22" FontWeight="Bold" Foreground="{StaticResource CriticalBrush}" Margin="0,4,0,0"/></StackPanel></Border>
+                    </UniformGrid>
+
+                    <Border Grid.Row="3" Style="{StaticResource CardBorder}" Padding="0">
+                        <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                            <Grid Margin="10,8"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="300"/></Grid.ColumnDefinitions>
+                                <TextBlock x:Name="PerformanceGridTitle" Text="Performance Results" FontWeight="SemiBold" FontSize="15" VerticalAlignment="Center"/>
+                                <TextBox x:Name="PerformanceSearchBox" Grid.Column="1" ToolTip="Search performance results" TextChanged="PerformanceSearchBox_TextChanged"/>
+                            </Grid>
+                            <DataGrid x:Name="PerformanceGrid" Grid.Row="1" SelectionChanged="PerformanceGrid_SelectionChanged" MouseDoubleClick="PerformanceGrid_MouseDoubleClick" LoadingRow="PerformanceGrid_LoadingRow" AlternationCount="2">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Rating" Binding="{Binding Rating}" Width="95" SortMemberPath="Rating"/>
+                                    <DataGridTextColumn Header="Content" Binding="{Binding Content}" Width="2.5*" SortMemberPath="Content"/>
+                                    <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="1.5*" SortMemberPath="Category"/>
+                                    <DataGridTextColumn Header="Instances" Binding="{Binding Instances}" Width="90" SortMemberPath="Instances"/>
+                                    <DataGridTextColumn Header="Total (ms)" Binding="{Binding TotalMs}" Width="100" SortMemberPath="TotalMs"/>
+                                    <DataGridTextColumn Header="Avg (ms)" Binding="{Binding AvgMs, StringFormat=N2}" Width="95" SortMemberPath="AvgMs"/>
+                                    <DataGridTextColumn Header="Max (ms)" Binding="{Binding MaxMs}" Width="95" SortMemberPath="MaxMs"/>
+                                    <DataGridTextColumn Header="Geometry" Binding="{Binding GeometryMs}" Width="100" SortMemberPath="GeometryMs"/>
+                                    <DataGridTextColumn Header="Parameters" Binding="{Binding ParametersMs}" Width="105" SortMemberPath="ParametersMs"/>
+                                    <DataGridTextColumn Header="Connectors" Binding="{Binding ConnectorsMs}" Width="105" SortMemberPath="ConnectorsMs"/>
+                                    <DataGridTextColumn Header="Solids" Binding="{Binding Solids}" Width="75" SortMemberPath="Solids"/>
+                                    <DataGridTextColumn Header="Faces" Binding="{Binding Faces}" Width="75" SortMemberPath="Faces"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <Border Grid.Row="2" Background="#061827" BorderBrush="#173E59" BorderThickness="0,1,0,0" Padding="10,8">
+                                <StackPanel>
+                                    <TextBlock Text="Performance Details" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                                    <TextBlock x:Name="PerformanceDetailsText" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" MaxHeight="92"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <Grid Grid.Row="4" Margin="0,8,0,0"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <Button Style="{StaticResource SecondaryButton}" Content="▶  Select Elements" Click="SelectPerformance_Click" HorizontalAlignment="Left"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button Style="{StaticResource SecondaryButton}" Content="Export CSV" Click="ExportPerformanceCsv_Click" Margin="0,0,8,0"/>
+                            <Button Style="{StaticResource SecondaryButton}" Content="✕  Close" Click="CloseButton_Click"/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Row="4" Background="#04101C" Margin="0">
+                <TextBlock Text="Less mystery. Better models." Foreground="#54AEE5" FontStyle="Italic" FontWeight="SemiBold" VerticalAlignment="Center" Margin="16,0"/>
+                <TextBlock x:Name="FooterVersionText" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,16,0"/>
+            </Grid>
+    </Grid>
+</Window>

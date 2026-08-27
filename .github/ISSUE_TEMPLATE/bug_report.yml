@@ -1,0 +1,44 @@
+name: Revit behavior bug
+description: Report a reproducible Revit Model Health Check problem.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: dropdown
+    id: revit-year
+    attributes:
+      label: Revit version
+      options: ["2025", "2026", "2027", "Multiple"]
+    validations:
+      required: true
+  - type: input
+    id: addin-version
+    attributes:
+      label: Add-in version
+      placeholder: 0.6.12
+    validations:
+      required: true
+  - type: textarea
+    id: scenario
+    attributes:
+      label: Exact scenario
+      description: Include the active view, model state, and steps immediately before the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Attach the full error, screenshot, log, or element IDs when available.
+    validations:
+      required: true
+  - type: textarea
+    id: regression
+    attributes:
+      label: Regression context
+      description: State whether this worked in an earlier add-in version and which adjacent features still work.
