@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "product": "Revit Model Health Check",
+  "version": "0.6.12",
+  "releaseTag": "v0.6.12",
+  "channel": "development",
+  "releaseApproved": false,
+  "supportedRevitVersions": [2025, 2026, 2027],
+  "frameworks": {
+    "2025": "net8.0-windows",
+    "2026": "net8.0-windows",
+    "2027": "net10.0-windows"
+  },
+  "releaseNotesUrl": null,
+  "assets": {
+    "source": {
+      "name": "Revit_Model_Health_Check_Revit_2025_2027_v0.6.12_Source.zip",
+      "url": null,
+      "sha256": null
+    },
+    "distribution": {
+      "name": "Revit_Model_Health_Check_v0.6.12_Distribution.zip",
+      "url": null,
+      "sha256": null
+    }
+  }
+}

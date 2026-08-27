@@ -1,0 +1,22 @@
+# Build and release output
+build/
+dist/
+artifacts/
+
+# .NET / Visual Studio
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.cache
+
+# Revit and diagnostics
+*.journal
+PerformanceAnalysis.log
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
