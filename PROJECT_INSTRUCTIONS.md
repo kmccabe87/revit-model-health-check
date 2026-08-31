@@ -61,6 +61,9 @@
 - GitHub should become the shared source, release, distribution, and update channel.
 - Development may remain local; GitHub is the handoff layer between work and personal ChatGPT environments.
 - `main` should represent the latest approved source state.
+- Keep the repository landing page user-first: its first substantive section must link to GitHub Releases, identify the Distribution ZIP as the normal download, and state that installation does not require the source or .NET SDK.
+- Keep source and build instructions below the end-user install guidance and label them for developers.
+- On every GitHub Release, present the Distribution ZIP as the primary end-user asset and the Source ZIP as a secondary developer asset.
 - Create a formal GitHub Release only after supported builds pass and the release has been exercised in Revit.
 - Releases should contain a source ZIP, a ready-to-install Distribution ZIP, changelog/release notes, and a machine-readable update manifest.
 - The future in-app updater should check GitHub Releases, compare versions, show a subtle Update Available state, download the correct release asset, and launch an external updater so the running Revit DLL is never overwritten in-process.
