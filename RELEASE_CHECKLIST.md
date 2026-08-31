@@ -13,8 +13,10 @@ draft or development state until every required item below is complete.
 
 ## 2. Supported builds
 
-- [ ] Revit 2025 builds as `net8.0-windows` against its installed Revit API.
-- [ ] Revit 2026 builds as `net8.0-windows` against its installed Revit API.
+- [ ] Revit 2025 builds as `net8.0-windows` before 2025.5 or
+      `net10.0-windows` for 2025.5+ against its installed Revit API.
+- [ ] Revit 2026 builds as `net8.0-windows` before 2026.5 or
+      `net10.0-windows` for 2026.5+ against its installed Revit API.
 - [ ] Revit 2027 builds as `net10.0-windows` against its installed Revit API.
 - [ ] Build logs are retained as release evidence.
 

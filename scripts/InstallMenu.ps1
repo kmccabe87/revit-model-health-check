@@ -17,7 +17,7 @@ function Get-InstallMark([int]$year) {
 function Show-Menu {
     Clear-Host
     Write-Host "============================================================" -ForegroundColor Cyan
-    Write-Host "Revit Model Health Check v0.6.13" -ForegroundColor Cyan
+    Write-Host "Revit Model Health Check v0.6.16" -ForegroundColor Cyan
     Write-Host "Choose Revit version(s) to install" -ForegroundColor Cyan
     Write-Host "============================================================" -ForegroundColor Cyan
     Write-Host ""

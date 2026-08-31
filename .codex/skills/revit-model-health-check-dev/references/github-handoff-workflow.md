@@ -12,7 +12,7 @@ Use GitHub as the shared source of truth between the work environment, the perso
 ## At home / personal ChatGPT
 Attach the newest source ZIP and say:
 
-> Use this source ZIP as the current implementation source of truth. Inventory it before editing. Update the Revit Model Health Check GitHub repository to this approved source state. Preserve history, update the changelog/README, commit the source, and create a GitHub Release only if the release is verified. Attach both the Source ZIP and Distribution ZIP and publish/update the machine-readable update manifest. Keep Revit 2025/2026 on .NET 8 and Revit 2027 on .NET 10. Do not introduce machine-specific paths or usernames.
+> Use this source ZIP as the current implementation source of truth. Inventory it before editing. Update the Revit Model Health Check GitHub repository to this approved source state. Preserve history, update the changelog/README, commit the source, and create a GitHub Release only if the release is verified. Attach both the Source ZIP and Distribution ZIP and publish/update the machine-readable update manifest. Select .NET 8 or .NET 10 for Revit 2025/2026 from the installed Revit API update and keep Revit 2027 on .NET 10. Do not introduce machine-specific paths or usernames.
 
 The personal ChatGPT should handle Git/GitHub mechanics when its GitHub connection supports them.
 

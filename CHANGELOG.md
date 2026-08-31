@@ -8,6 +8,18 @@ entry describes the source state; it does not prove release approval. Consult
 
 - No product behavior changes yet.
 
+## [0.6.16] - 2026-08-31
+
+- Added STRATUS mapped-parameter consistency and fabrication publish-readiness checks.
+- Added publish-complexity context, nested-family counts, diagnostic Publish Weight,
+  slowest-element reporting, and a Top Slowest Elements CSV section.
+- Updated the build to select .NET 8 or .NET 10 for Revit 2025/2026 from the
+  installed Revit API version; Revit 2027 remains on .NET 10.
+- Changed release packaging to capture the exact locally installed/tested payload
+  for Revit 2025, 2026, and 2027.
+- Preserved the WPF dashboard, active-view centerline logic, manual Performance
+  Analyzer, per-user installation, and existing reporting/selection behavior.
+
 ## [0.6.13] - 2026-08-26
 
 - Fixed the build preflight so it scans authored C# only and ignores generated

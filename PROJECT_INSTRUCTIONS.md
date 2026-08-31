@@ -13,8 +13,10 @@
 - Never claim a build is accepted from static inspection alone. Build every supported Revit version and exercise the reported case in Revit when possible.
 
 ## Supported Revit/framework matrix
-- Revit 2025: `net8.0-windows`
-- Revit 2026: `net8.0-windows`
+- Revit 2025.0-2025.4.x: `net8.0-windows`
+- Revit 2025.5+: `net10.0-windows`
+- Revit 2026.0-2026.4.x: `net8.0-windows`
+- Revit 2026.5+: `net10.0-windows`
 - Revit 2027: `net10.0-windows`
 - Do not accidentally move Revit 2027 back to .NET 8.
 
@@ -51,9 +53,9 @@
 - Normal installation is per-user and must use `%APPDATA%\Autodesk\Revit\Addins\<year>`.
 - Never hardcode a Windows username or machine-specific path.
 - Distribution users should not need Visual Studio, source code, or the .NET SDK.
-- Interactive installer choices: Revit 2025, Revit 2026, Revit 2027, Install All, Esc to exit.
+- Interactive installer choices: Revit 2025, Revit 2026, Revit 2027, Install All, and Quit.
 - Install All must call the same proven single-year installation routine sequentially for 2025, 2026, and 2027.
-- After an installation, Esc exits immediately; any other key returns to the menu.
+- After an installation, the installer returns to the year-selection menu.
 - If Revit is running, show a clear human-readable explanation rather than only an internal exit code.
 - Installer/update logic must account for unsaved work, normal Revit close, stuck/elevated processes, per-version paths, and accurate success/failure reporting.
 

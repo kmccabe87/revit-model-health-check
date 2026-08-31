@@ -43,7 +43,7 @@ public partial class HealthDashboard : Window
         _config = config;
         InitializeComponent();
 
-        var version = typeof(HealthDashboard).Assembly.GetName().Version?.ToString(3) ?? "0.6.13";
+        var version = typeof(HealthDashboard).Assembly.GetName().Version?.ToString(3) ?? "0.6.16";
         VersionText.Text = $"v{version}";
         FooterVersionText.Text = $"v{version}";
         RevitContextText.Text = $"Revit {_uiDoc.Application.Application.VersionNumber}   |   Active View: {_uiDoc.ActiveView?.Name ?? "Unknown"}";
@@ -230,9 +230,11 @@ public partial class HealthDashboard : Window
         PerfScannedValue.Text = _performanceScan.ElementsScanned.ToString("N0");
         PerfSkippedValue.Text = _performanceScan.ElementsSkipped.ToString("N0");
         PerfGroupsValue.Text = _performanceScan.Groups.Count.ToString("N0");
-        var slowestAverage = _performanceScan.Groups.Count == 0 ? 0 : _performanceScan.Groups.Max(g => g.AverageMs);
-        PerfSlowValue.Text = $"{slowestAverage:N1} ms";
-        PerformanceSummaryText.Text = $"{_performanceScan.DocumentTitle}   |   {_performanceScan.ElementsScanned:N0} elements profiled   |   {_performanceScan.TotalMs / 1000.0:N2} sec total   |   {_performanceScan.ElementsSkipped:N0} skipped";
+        var slowestElement = _performanceScan.SlowestElements.FirstOrDefault();
+        PerfSlowValue.Text = slowestElement == null ? "—" : $"{slowestElement.TotalMs:N0} ms";
+        PerfSlowValue.ToolTip = slowestElement == null ? null : $"Element {slowestElement.ElementId.Value}: {slowestElement.Group}";
+        var fileSize = _performanceScan.ModelFileBytes > 0 ? $"   |   {_performanceScan.ModelFileBytes / 1048576.0:N1} MB RVT" : string.Empty;
+        PerformanceSummaryText.Text = $"{_performanceScan.DocumentTitle}   |   {_performanceScan.ElementsScanned:N0} profiled   |   {_performanceScan.FabricationParts:N0} fabrication   |   {_performanceScan.FamilyInstances:N0} families   |   {_performanceScan.NestedInstances:N0} nested   |   {_performanceScan.AssemblyInstances:N0} assemblies   |   {_performanceScan.Levels:N0} levels   |   {_performanceScan.Grids:N0} grids   |   {_performanceScan.Rooms:N0} rooms   |   {_performanceScan.Spaces:N0} spaces{fileSize}";
         PerformanceGridTitle.Text = $"Performance Results ({_performanceScan.Groups.Count:N0})";
 
         _performanceRows = _performanceScan.Groups.Select((g, i) => new PerformanceRow
@@ -249,7 +251,9 @@ public partial class HealthDashboard : Window
             ParametersMs = g.ParameterMs,
             ConnectorsMs = g.ConnectorMs,
             Solids = g.SolidCount,
-            Faces = g.FaceCount
+            Faces = g.FaceCount,
+            Nested = g.NestedInstanceCount,
+            PublishWeight = g.PublishWeight
         }).ToList();
         ApplyPerformanceFilter();
     }
@@ -348,7 +352,7 @@ public partial class HealthDashboard : Window
         if (g == null || _performanceScan == null) { PerformanceDetailsText.Text = string.Empty; return; }
         var slow = _performanceScan.SlowestElements.Where(x => g.ElementIds.Contains(x.ElementId)).OrderByDescending(x => x.TotalMs).Take(10).ToList();
         var ids = string.Join(", ", slow.Select(x => $"{x.ElementId.Value} ({x.TotalMs} ms)"));
-        PerformanceDetailsText.Text = $"{g.Group} | API: {g.ApiType} | Instances: {g.Instances:N0} | Total: {g.TotalMs:N0} ms | Average: {g.AverageMs:N2} ms | Max: {g.MaxElementMs:N0} ms | Geometry: {g.GeometryMs:N0} ms | Parameters: {g.ParameterMs:N0} ms | Connectors: {g.ConnectorMs:N0} ms | Solids/Faces: {g.SolidCount:N0}/{g.FaceCount:N0} | Slowest IDs: {ids}";
+        PerformanceDetailsText.Text = $"{g.Group} | API: {g.ApiType} | Instances: {g.Instances:N0} | Total: {g.TotalMs:N0} ms | Average: {g.AverageMs:N2} ms | Max: {g.MaxElementMs:N0} ms | Geometry: {g.GeometryMs:N0} ms | Parameters: {g.ParameterMs:N0} ms ({g.ParameterCount:N0} values) | Connectors: {g.ConnectorMs:N0} ms ({g.ConnectorCount:N0}) | Nested: {g.NestedInstanceCount:N0} | Solids/Faces/Edges: {g.SolidCount:N0}/{g.FaceCount:N0}/{g.EdgeCount:N0} | Publish Weight: {g.PublishWeight:N0} (diagnostic, not STRATUS) | Slowest IDs: {ids}";
     }
 
     private void SelectHealth_Click(object sender, RoutedEventArgs e) => SelectCurrentHealth();
@@ -426,9 +430,18 @@ public partial class HealthDashboard : Window
         var path = AskPath("CSV report (*.csv)|*.csv", "csv", "Performance");
         if (string.IsNullOrEmpty(path)) return;
         var sb = new StringBuilder();
-        sb.AppendLine("Rating,Content,ApiType,Category,Instances,TotalMs,AverageMs,MaxElementMs,GeometryMs,ParameterMs,ConnectorMs,Solids,Faces,ElementIds");
+        sb.AppendLine("Rating,Content,ApiType,Category,Instances,TotalMs,AverageMs,MaxElementMs,GeometryMs,ParameterMs,ConnectorMs,Parameters,Connectors,Nested,Solids,Faces,Edges,PublishWeight,ElementIds");
         foreach (var g in _performanceScan.Groups)
-            sb.AppendLine(string.Join(",", new[] { g.Rating, g.Group, g.ApiType, g.Category, g.Instances.ToString(), g.TotalMs.ToString(), g.AverageMs.ToString("0.00"), g.MaxElementMs.ToString(), g.GeometryMs.ToString(), g.ParameterMs.ToString(), g.ConnectorMs.ToString(), g.SolidCount.ToString(), g.FaceCount.ToString(), string.Join(";", g.ElementIds.Select(x => x.Value)) }.Select(Csv)));
+            sb.AppendLine(string.Join(",", new[] { g.Rating, g.Group, g.ApiType, g.Category, g.Instances.ToString(), g.TotalMs.ToString(), g.AverageMs.ToString("0.00"), g.MaxElementMs.ToString(), g.GeometryMs.ToString(), g.ParameterMs.ToString(), g.ConnectorMs.ToString(), g.ParameterCount.ToString(), g.ConnectorCount.ToString(), g.NestedInstanceCount.ToString(), g.SolidCount.ToString(), g.FaceCount.ToString(), g.EdgeCount.ToString(), g.PublishWeight.ToString(), string.Join(";", g.ElementIds.Select(x => x.Value)) }.Select(Csv)));
+        sb.AppendLine();
+        sb.AppendLine("Slowest Elements");
+        sb.AppendLine("Rank,ElementId,Content,ApiType,Category,TotalMs,GeometryMs,ParameterMs,ConnectorMs,Parameters,Connectors,Nested,Solids,Faces,Edges,PublishWeight");
+        var rank = 0;
+        foreach (var x in _performanceScan.SlowestElements.Take(100))
+        {
+            rank++;
+            sb.AppendLine(string.Join(",", new[] { rank.ToString(), x.ElementId.Value.ToString(), x.Group, x.ApiType, x.Category, x.TotalMs.ToString(), x.GeometryMs.ToString(), x.ParameterMs.ToString(), x.ConnectorMs.ToString(), x.ParameterCount.ToString(), x.ConnectorCount.ToString(), x.NestedInstanceCount.ToString(), x.SolidCount.ToString(), x.FaceCount.ToString(), x.EdgeCount.ToString(), x.PublishWeight.ToString() }.Select(Csv)));
+        }
         File.WriteAllText(path, sb.ToString(), Encoding.UTF8);
         MessageBox.Show(this, "Performance CSV report exported.", "Revit Model Health Check");
     }
@@ -471,5 +484,7 @@ public partial class HealthDashboard : Window
         public long ConnectorsMs { get; init; }
         public int Solids { get; init; }
         public int Faces { get; init; }
+        public int Nested { get; init; }
+        public long PublishWeight { get; init; }
     }
 }

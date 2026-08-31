@@ -362,7 +362,7 @@
                         <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0"><StackPanel><TextBlock Text="Scanned" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="PerfScannedValue" FontSize="22" FontWeight="Bold" Margin="0,4,0,0"/></StackPanel></Border>
                         <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0"><StackPanel><TextBlock Text="Skipped" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="PerfSkippedValue" FontSize="22" FontWeight="Bold" Foreground="{StaticResource WarningBrush}" Margin="0,4,0,0"/></StackPanel></Border>
                         <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0"><StackPanel><TextBlock Text="Groups" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="PerfGroupsValue" FontSize="22" FontWeight="Bold" Margin="0,4,0,0"/></StackPanel></Border>
-                        <Border Style="{StaticResource CardBorder}"><StackPanel><TextBlock Text="Slowest Avg" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="PerfSlowValue" FontSize="22" FontWeight="Bold" Foreground="{StaticResource CriticalBrush}" Margin="0,4,0,0"/></StackPanel></Border>
+                        <Border Style="{StaticResource CardBorder}"><StackPanel><TextBlock Text="Slowest Element" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="PerfSlowValue" FontSize="22" FontWeight="Bold" Foreground="{StaticResource CriticalBrush}" Margin="0,4,0,0"/></StackPanel></Border>
                     </UniformGrid>
 
                     <Border Grid.Row="3" Style="{StaticResource CardBorder}" Padding="0">
@@ -383,6 +383,8 @@
                                     <DataGridTextColumn Header="Geometry" Binding="{Binding GeometryMs}" Width="100" SortMemberPath="GeometryMs"/>
                                     <DataGridTextColumn Header="Parameters" Binding="{Binding ParametersMs}" Width="105" SortMemberPath="ParametersMs"/>
                                     <DataGridTextColumn Header="Connectors" Binding="{Binding ConnectorsMs}" Width="105" SortMemberPath="ConnectorsMs"/>
+                                    <DataGridTextColumn Header="Nested" Binding="{Binding Nested}" Width="80" SortMemberPath="Nested"/>
+                                    <DataGridTextColumn Header="Publish Weight" Binding="{Binding PublishWeight}" Width="110" SortMemberPath="PublishWeight"/>
                                     <DataGridTextColumn Header="Solids" Binding="{Binding Solids}" Width="75" SortMemberPath="Solids"/>
                                     <DataGridTextColumn Header="Faces" Binding="{Binding Faces}" Width="75" SortMemberPath="Faces"/>
                                 </DataGrid.Columns>
