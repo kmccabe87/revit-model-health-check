@@ -1,58 +1,77 @@
 # Revit Model Health Check
 
-Model QA/QC and opt-in performance analysis for Autodesk Revit 2025, 2026, and 2027.
+A modern QA/QC dashboard for Autodesk Revit that helps teams find model-health problems before publishing or exchanging a model.
 
-## Download and install
+Current version: **v0.6.13**
 
-**Most users should download the ready-to-install Distribution ZIP from [GitHub Releases](https://github.com/kmccabe87/revit-model-health-check/releases).**
+## Highlights
 
-You do **not** need Visual Studio, the source code, or the .NET SDK.
+- Dark WPF dashboard designed to feel native alongside Revit.
+- One-click model scan with a weighted health score and clear issue guidance.
+- Searchable, sortable results with category filters and element selection.
+- CSV and HTML report exports for coordination and documentation.
+- Manual, opt-in Performance Analyzer for finding slow model elements without running automatically.
+- Per-user installation with support for Revit 2025, 2026, and 2027.
 
-1. Download `Revit_Model_Health_Check_vX.Y.Z_Distribution.zip` from the newest tested release.
-2. Extract the ZIP completely.
-3. Save your work and close every Revit session.
-4. Double-click `INSTALL.cmd`.
-5. Choose Revit 2025, 2026, 2027, or **Install All**.
-6. Reopen Revit and use **Pre-Publish Checks > Health Check > Scan Model**.
+## Model checks
 
-> The Source ZIP and GitHub's automatic source downloads are for developers. For normal installation, use the asset with **Distribution** in its filename.
+The Health Check scans for major model-quality concerns, including:
 
-## What it does
+- Revit warnings
+- Imported and linked CAD
+- In-place families
+- Model and detail groups
+- Unpinned or unloaded Revit links
+- Unplaced or unenclosed rooms and MEP spaces
+- Unused view templates
+- Visible centerlines in the active view
+- Excessive user worksets
 
-- Runs model-health checks and presents a compact health score and actionable issue list.
-- Checks effective centerline visibility in the active view, including parent-category and applicable view-template control.
-- Exports health results to HTML and CSV and helps locate affected elements.
-- Provides a manual, opt-in Performance Analyzer with safe filtering for model elements.
-- Uses a dark WPF dashboard with sortable, searchable results and scrollable issue details.
-- Supports one-click per-user installation for Revit 2025, 2026, 2027, or all supported versions.
+Results are grouped by category and severity, with recommended actions for each issue.
 
-**Less mystery. Better models.**
+## Performance Analyzer
 
-## Supported Revit versions
+The Performance tab profiles physical model elements and reports expensive regeneration behavior. It runs only when requested and includes safeguards that skip styles, types, and other non-model definitions that can produce misleading results or Revit API errors.
 
-| Revit | Target framework |
-|---|---|
-| 2025 | .NET 8 (`net8.0-windows`) |
-| 2026 | .NET 8 (`net8.0-windows`) |
-| 2027 | .NET 10 (`net10.0-windows`) |
+## Ribbon location
 
-## Uninstall
+**Pre-Publish Checks** > **Health Check** > **Scan Model**
 
-Close Revit, extract the Distribution ZIP if needed, and run `UNINSTALL.cmd`.
+## Supported versions
 
-## For developers
+| Revit | Framework |
+| --- | --- |
+| 2025 | .NET 8 |
+| 2026 | .NET 8 |
+| 2027 | .NET 10 |
 
-The latest imported source is **v0.6.13**. Tested installable versions are published separately under [Releases](https://github.com/kmccabe87/revit-model-health-check/releases).
+## Installation
 
-To build locally:
+1. Download and extract the versioned Distribution ZIP.
+2. Save or sync your work and close every Revit session.
+3. Double-click `INSTALL.cmd`.
+4. Choose Revit 2025, 2026, 2027, or **Install All**.
+5. Start Revit and open **Pre-Publish Checks**.
 
-1. Install the supported Revit versions and the required .NET SDKs.
-2. Clone or download the source and run `BUILD.cmd` on Windows.
-3. Confirm all three targets succeed.
-4. Run `PACKAGE.cmd` to create the Distribution ZIP.
-5. Exercise the add-in in each supported Revit version before publishing a release.
+Installation is per user and does not require administrator access, Visual Studio, or the .NET SDK.
 
-Build outputs are written to `build\2025`, `build\2026`, and `build\2027`. See [CHANGELOG.md](CHANGELOG.md) for version history and [PROJECT_INSTRUCTIONS.md](PROJECT_INSTRUCTIONS.md) for contribution and release requirements.
+Files are installed under:
+
+```text
+%APPDATA%\Autodesk\Revit\Addins\<year>
+```
+
+To remove the add-in, close Revit and run `UNINSTALL.cmd`.
+
+## Building from source
+
+The corresponding Revit versions must be installed so their API assemblies are available.
+
+1. Extract or clone the repository.
+2. Run `BUILD.cmd` to build Revit 2025, 2026, and 2027.
+3. Run `PACKAGE.cmd` to create the shareable Distribution ZIP.
+
+Build outputs are written to `build\2025`, `build\2026`, and `build\2027`.
 
 ## License
 
