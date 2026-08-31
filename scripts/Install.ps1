@@ -8,7 +8,7 @@ $ErrorActionPreference = "Stop"
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $root = Split-Path -Parent $here
 Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host "Revit Model Health Check v0.6.13 - Revit 2025 / 2026 / 2027 Installer" -ForegroundColor Cyan
+Write-Host "Revit Model Health Check v0.6.16 - Revit 2025 / 2026 / 2027 Installer" -ForegroundColor Cyan
 Write-Host "============================================================" -ForegroundColor Cyan
 
 $running = @(Get-Process Revit -ErrorAction SilentlyContinue)

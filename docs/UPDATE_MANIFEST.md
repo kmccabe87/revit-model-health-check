@@ -1,7 +1,8 @@
 # Update Manifest Contract
 
-`update-manifest.json` is intentionally unapproved until Windows/Revit testing
-and release packaging finish.
+`update-manifest.json` may be approved only after Windows/Revit testing and
+release packaging finish. The committed v0.6.16 manifest describes the approved
+v0.6.16 release assets and their SHA-256 values.
 
 An updater must reject a manifest when any of these conditions is true:
 

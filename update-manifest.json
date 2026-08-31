@@ -1,27 +1,27 @@
 {
   "schemaVersion": 1,
   "product": "Revit Model Health Check",
-  "version": "0.6.13",
-  "releaseTag": "v0.6.13",
-  "channel": "development",
-  "releaseApproved": false,
+  "version": "0.6.16",
+  "releaseTag": "v0.6.16",
+  "channel": "stable",
+  "releaseApproved": true,
   "supportedRevitVersions": [2025, 2026, 2027],
   "frameworks": {
     "2025": "net8.0-windows",
-    "2026": "net8.0-windows",
+    "2026": "net10.0-windows",
     "2027": "net10.0-windows"
   },
-  "releaseNotesUrl": null,
+  "releaseNotesUrl": "https://github.com/kmccabe87/revit-model-health-check/releases/tag/v0.6.16",
   "assets": {
     "source": {
-      "name": "Revit_Model_Health_Check_Revit_2025_2027_v0.6.13_Source.zip",
-      "url": null,
-      "sha256": null
+      "name": "Revit_Model_Health_Check_Revit_2025_2027_v0.6.16_Source.zip",
+      "url": "https://github.com/kmccabe87/revit-model-health-check/releases/download/v0.6.16/Revit_Model_Health_Check_Revit_2025_2027_v0.6.16_Source.zip",
+      "sha256": "0154d0c638ed346369a60918dd4da18ebfa4276d2eabaa6fd823114c9cc55b75"
     },
     "distribution": {
-      "name": "Revit_Model_Health_Check_v0.6.13_Distribution.zip",
-      "url": null,
-      "sha256": "63dcb7e5356de84294935f1b85d0a04f2833f55b1bdbfd836a0c589300033e1e"
+      "name": "Revit_Model_Health_Check_v0.6.16_Distribution.zip",
+      "url": "https://github.com/kmccabe87/revit-model-health-check/releases/download/v0.6.16/Revit_Model_Health_Check_v0.6.16_Distribution.zip",
+      "sha256": "03153e01dcac40883e5515de406c31aa51b2250455575e692960d394d70d92f5"
     }
   }
 }

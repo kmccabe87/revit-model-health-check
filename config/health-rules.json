@@ -141,6 +141,26 @@
       "guidance": "Checks only the current active view. Centerlines count as visible only when the centerline category/subcategory and every parent category are visible. If the active view template controls the applicable V/G category setting, the template-controlled state is used."
     },
     {
+      "key": "stratus_publish_parameters",
+      "name": "STRATUS Publish Parameters",
+      "category": "Publish Readiness",
+      "severity": "Warning",
+      "reviewAt": 1,
+      "failAt": 10,
+      "weight": 9,
+      "guidance": "Review STRATUS-aware elements that are missing one or more mapped publish properties: Assembly Name, Tracking Status, Item Number, QR Code, or Package Name. The check only enforces consistency on elements that already expose at least one known STRATUS mapped property."
+    },
+    {
+      "key": "fabrication_publish_readiness",
+      "name": "Fabrication Publish Readiness",
+      "category": "Publish Readiness",
+      "severity": "Warning",
+      "reviewAt": 1,
+      "failAt": 2,
+      "weight": 8,
+      "guidance": "When fabrication parts are present, confirm Revit can resolve the loaded fabrication configuration before publishing."
+    },
+    {
       "key": "user_worksets",
       "name": "User Worksets",
       "category": "Worksharing",

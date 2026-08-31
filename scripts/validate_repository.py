@@ -50,12 +50,14 @@ def main() -> int:
     require_text("src/SVMModelHealth/SVMModelHealth.csproj", f"<Version>{version}</Version>")
     require_text(
         "src/SVMModelHealth/SVMModelHealth.csproj",
-        '<TargetFramework Condition="\'$(RevitYear)\' != \'2027\'">net8.0-windows</TargetFramework>',
+        '<RevitTargetFramework Condition="\'$(RevitTargetFramework)\' == \'\' and \'$(RevitYear)\' == \'2027\'">net10.0-windows</RevitTargetFramework>',
     )
     require_text(
         "src/SVMModelHealth/SVMModelHealth.csproj",
-        '<TargetFramework Condition="\'$(RevitYear)\' == \'2027\'">net10.0-windows</TargetFramework>',
+        '<TargetFramework>$(RevitTargetFramework)</TargetFramework>',
     )
+    require_text("scripts/Build.ps1", 'return "net10.0-windows"')
+    require_text("scripts/Build.ps1", 'return "net8.0-windows"')
     require_text("src/SVMModelHealth/App.cs", 'const string tabName = "Pre-Publish Checks";')
     require_text("src/SVMModelHealth/App.cs", 'const string panelName = "Health Check";')
     require_text("src/SVMModelHealth/App.cs", '"Scan Model"')

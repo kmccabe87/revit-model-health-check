@@ -1,10 +1,14 @@
-# Current State - v0.6.13
+# Current State - v0.6.16
 
-## v0.6.13 build correction
-- Build preflight scans authored C# only and excludes generated `obj`/`bin` files.
-- Preflight failures now identify the actual source file and line number.
-- Build outputs were supplied for Revit 2025, 2026, and 2027, together with a ready-to-install Distribution ZIP.
-- No product behavior changed from v0.6.12.
+## v0.6.16 source and distribution
+- Added STRATUS mapped-parameter consistency and fabrication publish-readiness checks.
+- Added publish-complexity context, nested-family counts, diagnostic Publish Weight,
+  slowest-element reporting, and expanded performance CSV output.
+- Revit 2025/2026 builds select .NET 8 or .NET 10 from the installed Revit API
+  update; Revit 2027 remains on .NET 10.
+- Distribution packaging captures and verifies the exact installed v0.6.16 payload
+  for Revit 2025, 2026, and 2027.
+- A ready-to-install v0.6.16 Distribution ZIP was supplied with all three compiled payloads.
 
 ## Latest user-facing changes
 - Ribbon tab renamed to **Pre-Publish Checks**.
@@ -22,7 +26,8 @@
 - Multi-year installer and Install All workflow.
 - Distribution-package workflow.
 - `%APPDATA%\\Autodesk\\Revit\\Addins\\<year>` per-user deployment.
-- Framework matrix: 2025/2026 = .NET 8; 2027 = .NET 10.
+- Framework selection: Revit 2025/2026 before update 5 = .NET 8;
+  Revit 2025.5+/2026.5+ and Revit 2027 = .NET 10.
 
 ## GitHub direction
 The public GitHub repository is the source, handoff, and future release/update channel. The add-in may later check a release manifest for a newer version and launch an external updater after Revit closes. Do not overwrite the running add-in DLL from inside Revit.

@@ -10,7 +10,7 @@ $root = Split-Path -Parent $here
 $project = Join-Path $root "src\SVMModelHealth\SVMModelHealth.csproj"
 
 Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host "Revit Model Health Check v0.6.13 - Revit 2025 / 2026 / 2027 Build" -ForegroundColor Cyan
+Write-Host "Revit Model Health Check v0.6.16 - Revit 2025 / 2026 / 2027 Build" -ForegroundColor Cyan
 Write-Host "============================================================" -ForegroundColor Cyan
 
 if (!(Test-Path $project)) { throw "Project file not found: $project" }
@@ -45,14 +45,34 @@ if (!(Get-Command dotnet -ErrorAction SilentlyContinue)) { throw ".NET SDK was n
 $sdkLines = @(& dotnet --list-sdks)
 $hasNet8Sdk = @($sdkLines | Where-Object { $_ -match '^8\.' }).Count -gt 0
 $hasNet10Sdk = @($sdkLines | Where-Object { $_ -match '^10\.' }).Count -gt 0
-if (($Years -contains 2025 -or $Years -contains 2026) -and !$hasNet8Sdk) {
-    throw ".NET 8 SDK was not found. Revit 2025 and 2026 builds require .NET 8."
-}
-if (($Years -contains 2027) -and !$hasNet10Sdk) {
-    throw ".NET 10 SDK was not found. Revit 2027 builds require .NET 10."
+
+function Get-RevitApiVersion([string]$ApiPath) {
+    try {
+        return [System.Reflection.AssemblyName]::GetAssemblyName($ApiPath).Version
+    }
+    catch {
+        return $null
+    }
 }
 
-Write-Host "Framework matrix: Revit 2025/2026 = .NET 8; Revit 2027 = .NET 10" -ForegroundColor Gray
+function Get-RevitTargetFramework([int]$Year, [System.Version]$ApiVersion) {
+    # Revit 2027 ships on .NET 10.
+    if ($Year -ge 2027) { return "net10.0-windows" }
+
+    # Autodesk migrated Revit 2026.5 to .NET 10 and has also announced Revit 2025.5
+    # on .NET 10. Earlier 2025/2026 updates remain .NET 8. Detect the installed API
+    # update instead of assuming one framework for the entire Revit year.
+    if (($Year -eq 2025 -or $Year -eq 2026) -and $ApiVersion -ne $null -and $ApiVersion.Minor -ge 5) {
+        return "net10.0-windows"
+    }
+
+    return "net8.0-windows"
+}
+
+Write-Host "Framework selection is based on the installed Revit API:" -ForegroundColor Gray
+Write-Host "  Revit 2025.0-2025.4.x = .NET 8; Revit 2025.5+ = .NET 10" -ForegroundColor Gray
+Write-Host "  Revit 2026.0-2026.4.x = .NET 8; Revit 2026.5+ = .NET 10" -ForegroundColor Gray
+Write-Host "  Revit 2027 = .NET 10" -ForegroundColor Gray
 
 $failures = @()
 foreach ($year in $Years) {
@@ -72,10 +92,24 @@ foreach ($year in $Years) {
     if (Test-Path $outDir) { Remove-Item $outDir -Recurse -Force }
     New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 
-    $framework = if ($year -eq 2027) { "net10.0-windows" } else { "net8.0-windows" }
+    $apiVersion = Get-RevitApiVersion $api
+    $framework = Get-RevitTargetFramework $year $apiVersion
+    $apiVersionText = if ($apiVersion -ne $null) { $apiVersion.ToString() } else { "unknown" }
+    Write-Host "RevitAPI assembly version: $apiVersionText" -ForegroundColor Gray
     Write-Host "Target framework: $framework" -ForegroundColor Gray
 
-    & dotnet build $project -c $Configuration -f $framework -p:RevitYear=$year -p:RevitInstallDir="$revitDir" -p:OutputPath="$outDir"
+    if ($framework -eq "net8.0-windows" -and !$hasNet8Sdk) {
+        Write-Host "BUILD FAILED: .NET 8 SDK is required for this installed Revit $year API." -ForegroundColor Red
+        $failures += $year
+        continue
+    }
+    if ($framework -eq "net10.0-windows" -and !$hasNet10Sdk) {
+        Write-Host "BUILD FAILED: .NET 10 SDK is required for this installed Revit $year API." -ForegroundColor Red
+        $failures += $year
+        continue
+    }
+
+    & dotnet build $project -c $Configuration -f $framework -p:RevitYear=$year -p:RevitTargetFramework=$framework -p:RevitInstallDir="$revitDir" -p:OutputPath="$outDir"
     if ($LASTEXITCODE -ne 0 -or !(Test-Path (Join-Path $outDir "SVMModelHealth.dll"))) {
         Write-Host "BUILD FAILED for Revit $year" -ForegroundColor Red
         $failures += $year

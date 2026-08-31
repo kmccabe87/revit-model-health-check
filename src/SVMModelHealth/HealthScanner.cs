@@ -85,6 +85,21 @@ public static class HealthScanner
                   + (centerlineVisibility.Count > 25 ? $"; ... and {centerlineVisibility.Count - 25} more." : ".");
         checks.Add(Make(config.Get("centerlines_visible"), centerlineVisibility.Count, Array.Empty<ElementId>(), centerlineDetails));
 
+        var stratusParameters = PublishReadinessAnalyzer.AnalyzeStratusParameters(doc);
+        checks.Add(Make(
+            config.Get("stratus_publish_parameters"),
+            stratusParameters.AffectedElementIds.Count,
+            stratusParameters.AffectedElementIds,
+            stratusParameters.Details));
+
+        var fabricationReadiness = PublishReadinessAnalyzer.AnalyzeFabrication(doc);
+        var fabricationIssueCount = fabricationReadiness.FabricationPartCount > 0 && !fabricationReadiness.ConfigurationAvailable ? 1 : 0;
+        checks.Add(Make(
+            config.Get("fabrication_publish_readiness"),
+            fabricationIssueCount,
+            fabricationIssueCount > 0 ? fabricationReadiness.ElementIds : Array.Empty<ElementId>(),
+            fabricationReadiness.Details));
+
         var worksets = doc.IsWorkshared
             ? new FilteredWorksetCollector(doc).OfKind(WorksetKind.UserWorkset).ToWorksets().ToList()
             : new List<Workset>();

@@ -6,8 +6,8 @@ and load only the references it routes to.
 
 ## Baseline
 
-- Current imported baseline: v0.6.13.
-- Revit 2025 and 2026 target `net8.0-windows`.
+- Current imported baseline: v0.6.16.
+- Revit 2025 and 2026 select .NET 8 or .NET 10 from the installed Revit API version.
 - Revit 2027 targets `net10.0-windows`.
 - Product: Revit Model Health Check.
 - Ribbon: Pre-Publish Checks > Health Check > Scan Model.

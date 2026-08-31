@@ -18,7 +18,8 @@ When starting from a handoff on a new ChatGPT environment, read `references/curr
 3. Build the baseline when the required Revit SDK/API environment is available and record pre-existing failures.
 4. Preserve unrelated behavior and make the smallest coherent change.
 5. Increment and synchronize the version across all relevant files.
-6. Build every supported target: Revit 2025 and 2026 on .NET 8; Revit 2027 on .NET 10.
+6. Build every supported target using the installed Revit API: Revit 2025/2026
+   use .NET 8 before update 5 and .NET 10 at update 5 or later; Revit 2027 uses .NET 10.
 7. Test the reported Revit failure case and relevant regressions; compilation alone is not acceptance.
 8. Package source/distribution artifacts and provide a handoff with baseline, output version, changes, unchanged behavior, build/test results, exact test steps, limitations, and new lessons.
 

@@ -80,6 +80,11 @@ public static class PerformanceAnalyzer
                     ConnectorMs = g.Sum(x => x.ConnectorMs),
                     SolidCount = g.Sum(x => x.SolidCount),
                     FaceCount = g.Sum(x => x.FaceCount),
+                    EdgeCount = g.Sum(x => x.EdgeCount),
+                    ParameterCount = g.Sum(x => x.ParameterCount),
+                    ConnectorCount = g.Sum(x => x.ConnectorCount),
+                    NestedInstanceCount = g.Sum(x => x.NestedInstanceCount),
+                    PublishWeight = g.Sum(x => x.PublishWeight),
                     Rating = Rate(avg, total),
                     ElementIds = g.Select(x => x.ElementId).Distinct().ToList()
                 };
@@ -90,6 +95,16 @@ public static class PerformanceAnalyzer
 
         WriteBreadcrumb(breadcrumbs, $"COMPLETE|scanned={samples.Count}|failed={failedCandidates}|filtered={filteredOut}|ms={overall.ElapsedMilliseconds}");
 
+        var familyInstances = candidates.Count(x => x is FamilyInstance);
+        var fabricationParts = candidates.Count(x => x is FabricationPart);
+        var assemblyInstances = new FilteredElementCollector(doc).OfClass(typeof(AssemblyInstance)).WhereElementIsNotElementType().GetElementCount();
+        var levels = new FilteredElementCollector(doc).OfClass(typeof(Level)).WhereElementIsNotElementType().GetElementCount();
+        var grids = new FilteredElementCollector(doc).OfClass(typeof(Grid)).WhereElementIsNotElementType().GetElementCount();
+        var rooms = new FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Rooms).WhereElementIsNotElementType().GetElementCount();
+        var spaces = new FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_MEPSpaces).WhereElementIsNotElementType().GetElementCount();
+        long modelFileBytes = 0;
+        try { if (!string.IsNullOrWhiteSpace(doc.PathName) && File.Exists(doc.PathName)) modelFileBytes = new FileInfo(doc.PathName).Length; } catch { }
+
         return new PerformanceScanResult
         {
             DocumentTitle = doc.Title,
@@ -98,7 +113,16 @@ public static class PerformanceAnalyzer
             ElementsScanned = samples.Count,
             ElementsSkipped = failedCandidates + filteredOut,
             Groups = groups,
-            SlowestElements = samples.OrderByDescending(s => s.TotalMs).Take(100).ToList()
+            SlowestElements = samples.OrderByDescending(s => s.TotalMs).Take(100).ToList(),
+            FamilyInstances = familyInstances,
+            FabricationParts = fabricationParts,
+            AssemblyInstances = assemblyInstances,
+            Levels = levels,
+            Grids = grids,
+            Rooms = rooms,
+            Spaces = spaces,
+            NestedInstances = samples.Sum(x => x.NestedInstanceCount),
+            ModelFileBytes = modelFileBytes
         };
     }
 
@@ -132,7 +156,7 @@ public static class PerformanceAnalyzer
     private static ElementPerformanceSample ProfileElement(Element element, Options options)
     {
         long geometryMs = 0, parameterMs = 0, connectorMs = 0;
-        int parameters = 0, solids = 0, faces = 0, edges = 0;
+        int parameters = 0, solids = 0, faces = 0, edges = 0, connectors = 0, nestedInstances = 0;
         var total = Stopwatch.StartNew();
 
         try
@@ -172,13 +196,19 @@ public static class PerformanceAnalyzer
         try
         {
             var sw = Stopwatch.StartNew();
-            TouchConnectors(element);
+            connectors = TouchConnectors(element);
             sw.Stop();
             connectorMs = sw.ElapsedMilliseconds;
         }
         catch { }
 
+        if (element is FamilyInstance familyInstance)
+        {
+            try { nestedInstances = familyInstance.GetSubComponentIds().Count; } catch { }
+        }
+
         total.Stop();
+        var publishWeight = CalculatePublishWeight(parameters, connectors, nestedInstances, solids, faces, edges);
         return new ElementPerformanceSample
         {
             ElementId = element.Id,
@@ -192,7 +222,10 @@ public static class PerformanceAnalyzer
             ParameterCount = parameters,
             SolidCount = solids,
             FaceCount = faces,
-            EdgeCount = edges
+            EdgeCount = edges,
+            ConnectorCount = connectors,
+            NestedInstanceCount = nestedInstances,
+            PublishWeight = publishWeight
         };
     }
 
@@ -236,8 +269,9 @@ public static class PerformanceAnalyzer
         }
     }
 
-    private static void TouchConnectors(Element element)
+    private static int TouchConnectors(Element element)
     {
+        var count = 0;
         object? manager = null;
         if (element is FamilyInstance fi)
             manager = fi.MEPModel?.ConnectorManager;
@@ -248,16 +282,30 @@ public static class PerformanceAnalyzer
             manager = property?.GetValue(element);
         }
 
-        if (manager == null) return;
+        if (manager == null) return count;
         var connectorsProperty = manager.GetType().GetProperty("Connectors", BindingFlags.Public | BindingFlags.Instance);
         var connectors = connectorsProperty?.GetValue(manager) as IEnumerable;
-        if (connectors == null) return;
+        if (connectors == null) return count;
         foreach (var connector in connectors)
         {
             if (connector == null) continue;
+            count++;
             _ = connector.GetType().GetProperty("Id")?.GetValue(connector);
             _ = connector.GetType().GetProperty("Origin")?.GetValue(connector);
         }
+        return count;
+    }
+
+    private static long CalculatePublishWeight(int parameters, int connectors, int nestedInstances, int solids, int faces, int edges)
+    {
+        // Diagnostic heuristic only; this is not a STRATUS formula. Geometry and nesting carry
+        // more weight because they tend to increase extraction work more than simple metadata.
+        return parameters
+            + connectors * 8L
+            + nestedInstances * 25L
+            + solids * 12L
+            + faces * 2L
+            + Math.Min(edges, 5000);
     }
 
     private static StreamWriter? TryOpenBreadcrumbLog(Document doc, int candidates, int filteredOut)
